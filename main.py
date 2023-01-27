@@ -1,5 +1,6 @@
 import fnmatch
 import json
+import pathlib
 
 import datasets
 import transformers
@@ -10,6 +11,7 @@ from lm_eval.arguments import EvalArguments
 from lm_eval.evaluator import Evaluator
 from lm_eval.tasks import ALL_TASKS
 
+import src.models # for AutoModel to work
 
 class MultiChoice:
     def __init__(self, choices):
@@ -90,7 +92,7 @@ def parse_args():
         help="Path of file with previously generated solutions, if provided generation is skipped and only evaluation is done",
     )
     parser.add_argument(
-        "--output_path",
+        "--output_dir",
         type=str,
         default="evaluation_results.json",
         help="Path to save the results",
@@ -127,6 +129,10 @@ def main():
     else:
         task_names = pattern_match(args.tasks.split(","), ALL_TASKS)
 
+    output_dir = pathlib.Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    args.output_path = output_dir / "results.json"
+
     accelerator = Accelerator()
     if accelerator.is_main_process:
         print(f"Selected Tasks: {task_names}")
@@ -160,11 +166,11 @@ def main():
                     print("generation mode only")
                 generations, references = evaluator.generate_text(task)
                 if accelerator.is_main_process:
-                    with open("generations.json", "w") as fp:
+                    with open(output_dir / "generations.json", "w") as fp:
                         json.dump(generations, fp)
                         print("generations were saved")
                     if args.save_references:
-                        with open("references.json", "w") as fp:
+                        with open(output_dir / "references.json", "w") as fp:
                             json.dump(references, fp)
                             print("references were saved")
             else:
@@ -176,7 +182,7 @@ def main():
         if accelerator.is_main_process:
             print(dumped)
 
-        with open(args.output_path, "w") as f:
+        with open(output_dir / "results.json", "w") as f:
             f.write(dumped)
 
 

@@ -69,11 +69,11 @@ class Evaluator:
         if self.accelerator.is_main_process:
             if not self.args.generations_path:
                 if self.args.save_generations:
-                    with open("generations.json", "w") as fp:
+                    with open(os.path.join(self.args.output_dir, "generations.json"), "w") as fp:
                         json.dump(generations, fp)
                         print("generations were saved")
                 if self.args.save_references:
-                    with open("references.json", "w") as fp:
+                    with open(os.path.join(self.args.output_dir, "references.json"), "w") as fp:
                         json.dump(references, fp)
                         print("references were saved")
 
