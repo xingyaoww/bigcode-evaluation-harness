@@ -62,6 +62,7 @@ def parallel_generations(task, dataset, accelerator, model, tokenizer, n_tasks, 
 
     if accelerator.is_main_process:
         print(f"number of problems for this task is {n_tasks}")
+    assert args.n_samples % args.batch_size == 0, "n_samples must be divisible by batch_size"
     n_copies = args.n_samples // args.batch_size
 
     ds_tokenized = TokenizedDataset(
