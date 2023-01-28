@@ -131,7 +131,9 @@ def main():
 
     output_dir = pathlib.Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    args.output_path = output_dir / "results.json"
+    args.output_path = str(output_dir / "results.json")
+    with open(output_dir / "args.json", "w") as f:
+        json.dump(args.__dict__, f, indent=2)
 
     accelerator = Accelerator()
     if accelerator.is_main_process:
