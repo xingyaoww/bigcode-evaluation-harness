@@ -91,3 +91,8 @@ class MBPP(Task):
             predictions=generations,
         )
         return results
+
+class MBPPTrain(MBPP):
+    def get_dataset(self):
+        print("Loading train split of MBPP for evaluation")
+        return self.dataset["train"]

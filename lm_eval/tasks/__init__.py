@@ -11,6 +11,7 @@ TASK_REGISTRY = {
     "concode": concode.Concode,
     "humaneval": humaneval.HumanEval,
     "mbpp": mbpp.MBPP,
+    "mbpp-train": mbpp.MBPPTrain,
 }
 
 ALL_TASKS = sorted(list(TASK_REGISTRY))
